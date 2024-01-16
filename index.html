@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Formats</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="app" class="container mt-5">
+    <div class="form-group">
+        <label for="urlInput">YouTube Video URL:</label>
+        <input type="text" v-model="videoUrl" class="form-control" id="urlInput" placeholder="Enter YouTube URL">
+    </div>
+    
+    <button @click="getVideoFormats" class="btn btn-primary">Get Video Formats</button>
+
+    <div v-if="formats.length > 0" class="mt-3">
+        <h3>Available Formats:</h3>
+        <ul class="list-group">
+            <li v-for="format in formats" class="list-group-item">
+                <strong>Format ID:</strong> {{ format.format_id }}<br>
+                <strong>Resolution:</strong> {{ format.resolution }}<br>
+                <strong>File Size:</strong> {{ format.filesize }} MB<br>
+                <a :href="format.url" target="_blank">Download</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Vue.js 2 and Axios -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- Your Vue.js script -->
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            videoUrl: '',
+            formats: [],
+        },
+        methods: {
+            getVideoFormats: function () {
+                axios.post('http://127.0.0.1:5000/get_formats', { url: this.videoUrl })
+                    .then(response => {
+                        this.formats = response.data.formats;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching video formats:', error);
+                    });
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
